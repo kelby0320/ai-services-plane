@@ -1,0 +1,41 @@
+# -------------------------
+# Python cache & artifacts
+# -------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+*.spec
+
+# -------------------------
+# Virtual environments
+# -------------------------
+.venv/
+
+# -------------------------
+# Mypy
+# -------------------------
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# -------------------------
+# Ruff
+# -------------------------
+.ruff_cache/
+
+# -------------------------
+# Test / coverage
+# -------------------------
+.pytest_cache/
+coverage.xml
+htmlcov/
+.coverage
+.coverage.*
+.cache/
