@@ -26,3 +26,9 @@ dev = [
     "ruff>=0.14.5",
     "trio>=0.32.0",
 ]
+
+[tool.ruff]
+extend-exclude = ["packages/ai-orchestrator/src/ai_orchestrator/grpc/generated"]
+
+[tool.mypy]
+exclude = ["packages/ai-orchestrator/src/ai_orchestrator/grpc/generated"]
