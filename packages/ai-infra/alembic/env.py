@@ -18,7 +18,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from ai_infra.sql_alchemy.orm import Base
+from ai_infra.sql_alchemy.orm import Base  # noqa: E402 # ignore import order just for this file
 
 target_metadata = Base.metadata
 
