@@ -13,3 +13,14 @@ class GraphProfile:
     created_at: datetime
     updated_at: datetime
     is_active: bool
+
+
+@dataclass
+class ModelProfile:
+    id: UUID
+    name: str
+    description: str
+    model: str
+    created_at: datetime
+    updated_at: datetime
+    is_active: bool
