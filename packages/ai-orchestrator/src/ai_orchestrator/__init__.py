@@ -1,15 +1,15 @@
-from fastapi import FastAPI
-from ai_orchestrator.routers import health
-
-app = FastAPI(
-    title="AI Orchestrator",
-    version="0.1.0",
-)
-
-app.include_router(health.router, prefix="/api/v1")
+import anyio
 
 
-def main() -> None:
-    import uvicorn
+from ai_orchestrator.app import start
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+def main():
+    try:
+        anyio.run(start)
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    main()

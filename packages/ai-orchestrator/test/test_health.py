@@ -1,6 +1,6 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
-from ai_orchestrator import app
+from ai_orchestrator.http.server import app
 
 
 @pytest.fixture
