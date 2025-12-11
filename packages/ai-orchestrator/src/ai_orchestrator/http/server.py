@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from ai_orchestrator.routers import health
+from ai_orchestrator.http.routers import health
 
 app = FastAPI(
     title="AI Orchestrator",
