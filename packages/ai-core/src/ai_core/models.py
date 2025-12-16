@@ -1,5 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 
@@ -24,3 +25,7 @@ class ModelProfile:
     created_at: datetime
     updated_at: datetime
     is_active: bool
+    temperature: float | None = None
+    top_p: float | None = None
+    max_tokens: int | None = None
+    extra: dict[str, Any] = field(default_factory=dict)

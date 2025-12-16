@@ -15,11 +15,15 @@ name = "ai-core"
 version = "0.1.0"
 source = { editable = "packages/ai-core" }
 dependencies = [
+    { name = "ai-infra" },
     { name = "langgraph" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "langgraph", specifier = ">=0.2.53" }]
+requires-dist = [
+    { name = "ai-infra", editable = "packages/ai-infra" },
+    { name = "langgraph", specifier = ">=0.2.53" },
+]
 
 [[package]]
 name = "ai-infra"
@@ -28,6 +32,7 @@ source = { editable = "packages/ai-infra" }
 dependencies = [
     { name = "ai-core" },
     { name = "alembic" },
+    { name = "httpx" },
     { name = "psycopg" },
     { name = "sqlalchemy" },
 ]
@@ -36,6 +41,7 @@ dependencies = [
 requires-dist = [
     { name = "ai-core", editable = "packages/ai-core" },
     { name = "alembic", specifier = ">=1.17.2" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "psycopg", specifier = ">=3.3.2" },
     { name = "sqlalchemy", specifier = ">=2.0.45" },
 ]
