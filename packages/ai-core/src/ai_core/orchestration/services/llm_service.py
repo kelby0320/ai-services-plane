@@ -1,15 +1,141 @@
 """LLM service for model-bound orchestration."""
 
-from typing import Any, AsyncIterator
+from dataclasses import dataclass, field
+from collections.abc import AsyncIterator
+from typing import Any, Literal, Protocol
 
 from ai_core.models import ModelProfile
-from ai_infra.llms import (
-    ChatMessage,
-    ChatRequest,
-    ChatResponse,
-    ChatStreamEvent,
-    LLMClient,
-)
+
+# Type definitions
+Role = Literal["system", "developer", "user", "assistant", "tool"]
+
+
+@dataclass
+class ChatMessage:
+    """A single chat message."""
+
+    role: Role
+    content: str
+    name: str | None = None
+
+
+@dataclass
+class ChatRequest:
+    """Request for chat completion."""
+
+    model: str
+    messages: list[ChatMessage]
+    stream: bool = False
+    temperature: float | None = None
+    top_p: float | None = None
+    max_tokens: int | None = None
+    stop: list[str] | None = None
+    extra: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class Usage:
+    """Token usage information."""
+
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    total_tokens: int | None = None
+
+
+@dataclass
+class ChatResponse:
+    """Response from chat completion."""
+
+    text: str
+    finish_reason: str | None = None
+    usage: Usage | None = None
+    raw: dict[str, Any] | None = None
+
+
+@dataclass
+class TokenDelta:
+    """Streaming token delta event."""
+
+    text: str
+
+
+@dataclass
+class StreamUsage:
+    """Streaming usage information event."""
+
+    usage: Usage
+
+
+@dataclass
+class StreamDone:
+    """Stream completion event."""
+
+    finish_reason: str | None = None
+
+
+ChatStreamEvent = TokenDelta | StreamUsage | StreamDone
+
+
+def messages_to_json(messages: list[ChatMessage]) -> list[dict[str, Any]]:
+    """Convert ChatMessage list to provider JSON format."""
+    result = []
+    for msg in messages:
+        json_msg: dict[str, Any] = {
+            "role": msg.role,
+            "content": msg.content,
+        }
+        if msg.name is not None:
+            json_msg["name"] = msg.name
+        result.append(json_msg)
+    return result
+
+
+def parse_usage(data: dict[str, Any]) -> Usage | None:
+    """Parse usage dictionary defensively."""
+    if not isinstance(data, dict):
+        return None
+
+    usage_data = data.get("usage", data)
+    if not isinstance(usage_data, dict):
+        return None
+
+    return Usage(
+        prompt_tokens=usage_data.get("prompt_tokens"),
+        completion_tokens=usage_data.get("completion_tokens"),
+        total_tokens=usage_data.get("total_tokens"),
+    )
+
+
+class LLMClient(Protocol):
+    """Protocol for LLM client implementations."""
+
+    async def chat(self, request: ChatRequest) -> ChatResponse:
+        """
+        Send a non-streaming chat request.
+
+        Args:
+            request: Chat request parameters.
+
+        Returns:
+            Chat response with text and metadata.
+        """
+        ...
+
+    def stream_chat(self, request: ChatRequest) -> AsyncIterator[ChatStreamEvent]:
+        """
+        Send a streaming chat request.
+
+        Args:
+            request: Chat request parameters (stream will be forced to True).
+
+        Yields:
+            ChatStreamEvent objects (TokenDelta, StreamUsage, StreamDone).
+        """
+        ...
+
+    async def aclose(self) -> None:
+        """Close the client."""
+        ...
 
 
 class LLMService:
@@ -23,8 +149,8 @@ class LLMService:
             client: LLM client instance.
             profile: Model profile with defaults.
         """
-        self._client = client
-        self._profile = profile
+        self._client: LLMClient = client
+        self._profile: ModelProfile = profile
 
     async def stream(
         self, messages: list[ChatMessage], **overrides: Any

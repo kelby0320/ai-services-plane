@@ -1,23 +1,36 @@
+import pytest
+from uuid import uuid4
+
 from ai_core.orchestration.graphs import graph_registry
 from ai_core.orchestration.orchestrator import ChatOrchestrator
+from ai_core.orchestration.services import Services
 
 
-def test_chat_orchestrator_execution():
+@pytest.mark.asyncio
+async def test_chat_orchestrator_execution():
     """
-    Verifies that the ChatOrchestrator can successfully execute the default graph
+    Verifies that the ChatOrchestrator can successfully execute the dummy graph
     and return the expected dummy response.
     """
     # Arrange
-    build_graph = graph_registry.get("default_graph_v1")
-    assert build_graph is not None, "default_graph_v1 should be registered"
+    build_graph = graph_registry.get("dummy_graph_v1")
+    assert build_graph is not None, "dummy_graph_v1 should be registered"
 
-    graph = build_graph()
+    services = Services(llm_main=None)
+
+    graph = build_graph(services)
     orchestrator = ChatOrchestrator(graph)
     input_message = "Test message"
     expected_response = "This is a dummy response from the LLM generation node."
 
     # Act
-    response = orchestrator.execute(input_message)
+    response = await orchestrator.execute(
+        message=input_message,
+        request_id=uuid4(),
+        session_id=uuid4(),
+        user_id=uuid4(),
+        model_bindings={},
+    )
 
     # Assert
     assert response == expected_response

@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import json
-from typing import Any, AsyncIterator
+from dataclasses import dataclass, field
+from collections.abc import AsyncIterator
+from typing import Any
 
 import httpx
 
-from ai_infra.llms.models import (
+from ai_core.orchestration.services.llm_service import (
+    LLMClient,
     ChatRequest,
     ChatResponse,
     ChatStreamEvent,
-    LLMClientConfig,
     StreamDone,
     StreamUsage,
     TokenDelta,
@@ -20,10 +22,21 @@ from ai_infra.llms.models import (
 )
 
 
-class LLMClient:
+@dataclass
+class OpenAiLLMClientConfig:
+    """Configuration for OpenAiLLMClient."""
+
+    base_url: str
+    api_key: str | None = None
+    timeout_s: float = 60.0
+    default_headers: dict[str, str] = field(default_factory=dict)
+    verify_tls: bool = True
+
+
+class OpenAiLLMClient(LLMClient):
     """Client for OpenAI-compatible LLM endpoints."""
 
-    def __init__(self, config: LLMClientConfig) -> None:
+    def __init__(self, config: OpenAiLLMClientConfig) -> None:
         """
         Initialize the LLM client.
 

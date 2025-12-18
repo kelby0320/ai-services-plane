@@ -1,23 +1,8 @@
 """LLM client and types for OpenAI-compatible endpoints."""
 
-from ai_infra.llms.client import LLMClient
-from ai_infra.llms.models import (
-    ChatMessage,
-    ChatRequest,
-    ChatResponse,
-    ChatStreamEvent,
-    LLMClientConfig,
-    Role,
-    Usage,
-)
+from ai_infra.llms.client import OpenAiLLMClient, OpenAiLLMClientConfig
 
 __all__ = [
-    "LLMClient",
-    "LLMClientConfig",
-    "ChatMessage",
-    "ChatRequest",
-    "ChatResponse",
-    "Usage",
-    "ChatStreamEvent",
-    "Role",
+    "OpenAiLLMClient",
+    "OpenAiLLMClientConfig",
 ]

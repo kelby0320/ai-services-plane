@@ -6,7 +6,6 @@ readme = "README.md"
 authors = [{ name = "Kelby Madal-Hellmuth", email = "kelby0320@gmail.com" }]
 requires-python = ">=3.14"
 dependencies = [
-    "ai-infra",
     "langgraph>=0.2.53",
 ]
 

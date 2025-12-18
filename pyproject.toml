@@ -40,3 +40,4 @@ extend-exclude = ["packages/ai-orchestrator/src/ai_orchestrator/grpc/generated"]
 
 [tool.mypy]
 exclude = ["packages/ai-orchestrator/src/ai_orchestrator/grpc/generated"]
+plugins = ["pydantic.mypy"]

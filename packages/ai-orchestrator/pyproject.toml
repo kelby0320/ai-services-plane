@@ -6,6 +6,8 @@ readme = "README.md"
 authors = [{ name = "Kelby Madal-Hellmuth", email = "kelby0320@gmail.com" }]
 requires-python = ">=3.14"
 dependencies = [
+    "ai-core",
+    "ai-infra",
     "anyio>=4.11.0",
     "fastapi>=0.121.2",
     "grpcio>=1.76.0",
@@ -20,3 +22,7 @@ ai-orchestrator = "ai_orchestrator:main"
 [build-system]
 requires = ["uv_build>=0.9.8,<0.10.0"]
 build-backend = "uv_build"
+
+[tool.uv.sources]
+ai-core = { workspace = true }
+ai-infra = { workspace = true }
