@@ -1,8 +1,6 @@
-from uuid import UUID
+from collections.abc import AsyncIterator
 
 from langgraph.graph.state import CompiledStateGraph
-
-from ai_core.models import ModelProfile
 
 
 class ChatOrchestrator:
@@ -21,36 +19,19 @@ class ChatOrchestrator:
 
     async def execute(
         self,
-        message: str,
-        request_id: UUID,
-        session_id: UUID,
-        user_id: UUID,
-        model_bindings: dict[str, ModelProfile],
-    ) -> str:
+        initial_state: dict,
+    ) -> AsyncIterator[dict]:
         """
-        Executes the graph with the given message and state.
+        Executes the graph with the given initial state and streams state updates.
 
         Args:
-            message: The input message to execute the graph with.
-            request_id: Unique identifier for the request.
-            session_id: Unique identifier for the session.
-            user_id: Unique identifier for the user.
-            model_bindings: Dictionary mapping slot names to model profiles.
+            initial_state: Dictionary containing the initial state for graph execution.
+                Expected keys: request_id, session_id, user_id, model_bindings, messages.
 
-        Returns:
-            str: The response from the graph execution.
+        Yields:
+            dict: State updates from the graph execution.
         """
-        initial_state = {
-            "request_id": request_id,
-            "session_id": session_id,
-            "user_id": user_id,
-            "model_bindings": model_bindings,
-            "messages": [message],
-        }
-        result = await self._graph.ainvoke(initial_state)
-
-        # extracted from state
-        messages = result.get("messages", [])
-        if messages:
-            return messages[-1]
-        return ""
+        async for state_update in self._graph.astream(
+            initial_state, stream_mode="updates"
+        ):
+            yield state_update

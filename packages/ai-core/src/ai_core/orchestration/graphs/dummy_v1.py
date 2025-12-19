@@ -1,4 +1,4 @@
-from langgraph.graph import END, StateGraph
+from langgraph.graph import END, StateGraph, START
 from langgraph.graph.state import CompiledStateGraph
 
 from ai_core.orchestration.services import Services
@@ -31,7 +31,9 @@ def build_graph(services: Services) -> CompiledStateGraph:
     workflow.add_node("dummy_llm_generate", dummy_llm_generate)
 
     # Set entry point
-    workflow.set_entry_point("dummy_llm_generate")
+    # workflow.set_entry_point("dummy_llm_generate")
+
+    workflow.add_edge(START, "dummy_llm_generate")
 
     # Add edges
     workflow.add_edge("dummy_llm_generate", END)

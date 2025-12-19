@@ -24,13 +24,15 @@ async def test_chat_orchestrator_execution():
     expected_response = "This is a dummy response from the LLM generation node."
 
     # Act
-    response = await orchestrator.execute(
-        message=input_message,
-        request_id=uuid4(),
-        session_id=uuid4(),
-        user_id=uuid4(),
-        model_bindings={},
-    )
+    initial_state = {
+        "request_id": uuid4(),
+        "session_id": uuid4(),
+        "user_id": uuid4(),
+        "model_bindings": {},
+        "messages": [input_message],
+    }
 
-    # Assert
+    async for state_update in orchestrator.execute(initial_state):
+        response = state_update["dummy_llm_generate"]["messages"][-1]
+
     assert response == expected_response
