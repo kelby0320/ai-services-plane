@@ -1,9 +1,8 @@
 from __future__ import annotations
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Boolean, DateTime, Float, Integer, JSON, String, Text
+from sqlalchemy import Boolean, DateTime, Float, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from ai_core.models import GraphProfile, ModelProfile
@@ -72,7 +71,6 @@ class ModelProfileOrm(Base):
     temperature: Mapped[float | None] = mapped_column(Float, nullable=True)
     top_p: Mapped[float | None] = mapped_column(Float, nullable=True)
     max_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    extra: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
 
     def to_domain(self) -> ModelProfile:
         return ModelProfile(
@@ -86,7 +84,6 @@ class ModelProfileOrm(Base):
             temperature=self.temperature,
             top_p=self.top_p,
             max_tokens=self.max_tokens,
-            extra=self.extra or {},
         )
 
     @staticmethod
@@ -102,5 +99,4 @@ class ModelProfileOrm(Base):
             temperature=model_profile.temperature,
             top_p=model_profile.top_p,
             max_tokens=model_profile.max_tokens,
-            extra=model_profile.extra if model_profile.extra else None,
         )

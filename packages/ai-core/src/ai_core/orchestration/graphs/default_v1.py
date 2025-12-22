@@ -18,11 +18,11 @@ def build_graph(services: Services) -> CompiledStateGraph:
     """
     workflow = StateGraph(GraphState)
 
-    # # Add nodes - use a closure to capture services
-    # async def node_func(state: GraphState) -> dict:
-    #     return await llm_generate(state, services)
+    # Add nodes - use a closure to capture services
+    async def node_func(state: GraphState) -> dict:
+        return await llm_generate(state, services)
 
-    workflow.add_node("llm_generate", lambda s: llm_generate(s, services))
+    workflow.add_node("llm_generate", node_func)
 
     # Set entry point
     workflow.set_entry_point("llm_generate")

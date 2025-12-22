@@ -1,6 +1,6 @@
 """LLM service for model-bound orchestration."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from collections.abc import AsyncIterator
 from typing import Any, Literal, Protocol
 
@@ -30,7 +30,6 @@ class ChatRequest:
     top_p: float | None = None
     max_tokens: int | None = None
     stop: list[str] | None = None
-    extra: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -214,9 +213,6 @@ class LLMService:
             params["top_p"] = self._profile.top_p
         if self._profile.max_tokens is not None:
             params["max_tokens"] = self._profile.max_tokens
-
-        # Merge profile.extra
-        params.update(self._profile.extra)
 
         # Apply overrides (last wins)
         params.update(overrides)

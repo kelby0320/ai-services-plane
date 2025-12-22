@@ -155,9 +155,6 @@ class OpenAiLLMClient(LLMClient):
         if request.stop is not None:
             payload["stop"] = request.stop
 
-        # Merge extra fields
-        payload.update(request.extra)
-
         return payload
 
     def _parse_response(self, data: dict[str, Any]) -> ChatResponse:

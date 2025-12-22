@@ -13,8 +13,8 @@ async def test_chat_orchestrator_execution():
     and return the expected dummy response.
     """
     # Arrange
-    build_graph = graph_registry.get("dummy_graph_v1")
-    assert build_graph is not None, "dummy_graph_v1 should be registered"
+    build_graph = graph_registry.get("dummy_v1")
+    assert build_graph is not None, "dummy_v1 should be registered"
 
     services = Services(llm_main=None)
 

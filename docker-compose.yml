@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ai_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -25,13 +25,14 @@ services:
     container_name: ai-orchestrator
     restart: unless-stopped
     environment:
-      AI_ORCHESTRATOR__HTTP_PORT: 8080
+      AI_ORCHESTRATOR__HTTP_PORT: 9000
       AI_ORCHESTRATOR__GRPC_PORT: 50051
       AI_ORCHESTRATOR__AI_API_KEY: "tgp_v1_t4DVA8t19Jf51V01ojUQgilBSWInzH9u0Z7J3qiDPfU"
-      AI_ORCHESTRATOR__AI_BASE_URL: "https://api.together.xyz/v1/chat/completions"
-      AI_ORCHESTRATOR__PG_DSN: "postgresql+psycopg://postgres:postgres@host.docker.internal:5432/ai_db"
+      AI_ORCHESTRATOR__AI_BASE_URL: "https://api.together.xyz/v1"
+      AI_ORCHESTRATOR__PG_DSN: "postgresql+psycopg://postgres:postgres@host.docker.internal:5433/ai_db"
     ports:
-      - "8080:8080"
+      - "9000:9000"
+      - "50051:50051"
     depends_on:
       ai-postgres:
         condition: service_healthy

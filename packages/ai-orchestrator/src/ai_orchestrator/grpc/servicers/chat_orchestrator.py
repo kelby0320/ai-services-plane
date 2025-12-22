@@ -112,8 +112,14 @@ class ChatOrchestratorService(chat_orchestrator_pb2_grpc.ChatOrchestratorService
             is_first = True
             last_message = ""
             async for state_update in orchestrator.execute(initial_state):
-                # Extract messages from state update
-                messages = state_update.get("messages", [])
+                # Extract llm_generate node output from state update
+                try:
+                    llm_generate = state_update["llm_generate"]
+                except KeyError:
+                    continue
+
+                # Extract messages from llm_generate node output
+                messages = llm_generate.get("messages", [])
                 if messages:
                     # Get the latest message
                     current_message = messages[-1] if isinstance(messages, list) else ""

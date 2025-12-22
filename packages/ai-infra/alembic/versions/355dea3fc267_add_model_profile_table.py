@@ -31,6 +31,9 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),
+        sa.Column("temperature", sa.Float(), nullable=True),
+        sa.Column("top_p", sa.Float(), nullable=True),
+        sa.Column("max_tokens", sa.Integer(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
