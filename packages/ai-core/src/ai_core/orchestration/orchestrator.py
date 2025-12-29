@@ -32,6 +32,6 @@ class ChatOrchestrator:
             dict: State updates from the graph execution.
         """
         async for state_update in self._graph.astream(
-            initial_state, stream_mode="updates"
+            initial_state, stream_mode="custom"
         ):
             yield state_update

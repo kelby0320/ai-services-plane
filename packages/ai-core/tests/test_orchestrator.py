@@ -32,7 +32,18 @@ async def test_chat_orchestrator_execution():
         "messages": [input_message],
     }
 
-    async for state_update in orchestrator.execute(initial_state):
-        response = state_update["dummy_llm_generate"]["messages"][-1]
+    # Collect custom stream events
+    custom_events = []
+    async for event in orchestrator.execute(initial_state):
+        custom_events.append(event)
+
+    # Build response from token_delta events
+    response = ""
+    for event in custom_events:
+        if isinstance(event, dict) and event.get("type") == "token_delta":
+            response += event.get("content", "")
+
+    # Remove trailing space from accumulated response
+    response = response.rstrip()
 
     assert response == expected_response

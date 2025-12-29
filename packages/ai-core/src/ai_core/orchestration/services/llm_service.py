@@ -151,7 +151,7 @@ class LLMService:
         self._client: LLMClient = client
         self._profile: ModelProfile = profile
 
-    async def stream(
+    def stream(
         self, messages: list[ChatMessage], **overrides: Any
     ) -> AsyncIterator[ChatStreamEvent]:
         """
@@ -161,8 +161,8 @@ class LLMService:
             messages: List of chat messages.
             **overrides: Parameter overrides (temperature, top_p, max_tokens, etc.).
 
-        Yields:
-            ChatStreamEvent objects.
+        Returns:
+            AsyncIterator of ChatStreamEvent objects.
         """
         params = self._merge_params(overrides)
         request = ChatRequest(
@@ -171,8 +171,7 @@ class LLMService:
             stream=True,
             **params,
         )
-        async for event in self._client.stream_chat(request):
-            yield event
+        return self._client.stream_chat(request)
 
     async def chat(self, messages: list[ChatMessage], **overrides: Any) -> ChatResponse:
         """
