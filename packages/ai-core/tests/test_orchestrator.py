@@ -4,6 +4,7 @@ from uuid import uuid4
 from ai_core.orchestration.graphs import graph_registry
 from ai_core.orchestration.orchestrator import ChatOrchestrator
 from ai_core.orchestration.services import Services
+from ai_core.orchestration.streaming import TokenDelta
 
 
 @pytest.mark.asyncio
@@ -32,16 +33,15 @@ async def test_chat_orchestrator_execution():
         "messages": [input_message],
     }
 
-    # Collect custom stream events
-    custom_events = []
-    async for event in orchestrator.execute(initial_state):
-        custom_events.append(event)
+    sourced_events = []
+    async for sourced_event in orchestrator.execute(initial_state):
+        sourced_events.append(sourced_event)
 
-    # Build response from token_delta events
+    # Build response from TokenDelta events
     response = ""
-    for event in custom_events:
-        if isinstance(event, dict) and event.get("type") == "token_delta":
-            response += event.get("content", "")
+    for sourced_event in sourced_events:
+        if isinstance(sourced_event.event, TokenDelta):
+            response += sourced_event.event.text
 
     # Remove trailing space from accumulated response
     response = response.rstrip()

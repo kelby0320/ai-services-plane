@@ -5,6 +5,28 @@ from collections.abc import AsyncIterator
 from typing import Any, Literal, Protocol
 
 from ai_core.models import ModelProfile
+from ai_core.orchestration.streaming import (
+    ChatStreamEvent,
+    StreamDone,
+    StreamUsage,
+    TokenDelta,
+    Usage,
+)
+
+# Re-export for backward compatibility
+__all__ = [
+    "ChatMessage",
+    "ChatRequest",
+    "ChatResponse",
+    "ChatStreamEvent",
+    "LLMClient",
+    "LLMService",
+    "Role",
+    "StreamDone",
+    "StreamUsage",
+    "TokenDelta",
+    "Usage",
+]
 
 # Type definitions
 Role = Literal["system", "developer", "user", "assistant", "tool"]
@@ -33,15 +55,6 @@ class ChatRequest:
 
 
 @dataclass
-class Usage:
-    """Token usage information."""
-
-    prompt_tokens: int | None = None
-    completion_tokens: int | None = None
-    total_tokens: int | None = None
-
-
-@dataclass
 class ChatResponse:
     """Response from chat completion."""
 
@@ -49,30 +62,6 @@ class ChatResponse:
     finish_reason: str | None = None
     usage: Usage | None = None
     raw: dict[str, Any] | None = None
-
-
-@dataclass
-class TokenDelta:
-    """Streaming token delta event."""
-
-    text: str
-
-
-@dataclass
-class StreamUsage:
-    """Streaming usage information event."""
-
-    usage: Usage
-
-
-@dataclass
-class StreamDone:
-    """Stream completion event."""
-
-    finish_reason: str | None = None
-
-
-ChatStreamEvent = TokenDelta | StreamUsage | StreamDone
 
 
 class LLMClient(Protocol):

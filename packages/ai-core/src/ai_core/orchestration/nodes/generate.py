@@ -1,8 +1,9 @@
 from langgraph.config import get_stream_writer
 
 from ai_core.orchestration.services import Services
-from ai_core.orchestration.services.llm_service import ChatMessage, TokenDelta
+from ai_core.orchestration.services.llm_service import ChatMessage
 from ai_core.orchestration.state import OrchestratorState
+from ai_core.orchestration.streaming import StreamDone, StreamUsage, TokenDelta
 
 
 async def llm_generate(state: OrchestratorState, services: Services) -> dict:
@@ -31,6 +32,16 @@ async def llm_generate(state: OrchestratorState, services: Services) -> dict:
         if isinstance(event, TokenDelta):
             writer({"type": "token_delta", "content": event.text})
             accumulated_text += event.text
+        elif isinstance(event, StreamUsage):
+            # Convert Usage dataclass to dict for serialization
+            usage_dict = {
+                "prompt_tokens": event.usage.prompt_tokens,
+                "completion_tokens": event.usage.completion_tokens,
+                "total_tokens": event.usage.total_tokens,
+            }
+            writer({"type": "stream_usage", "usage": usage_dict})
+        elif isinstance(event, StreamDone):
+            writer({"type": "stream_done", "finish_reason": event.finish_reason})
 
     # Return accumulated text in state
     return {"messages": [accumulated_text]}
