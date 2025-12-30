@@ -17,8 +17,8 @@ from ai_core.orchestration.services.llm_service import (
     StreamDone,
     StreamUsage,
     TokenDelta,
-    messages_to_json,
-    parse_usage,
+    ChatMessage,
+    Usage,
 )
 
 
@@ -122,7 +122,7 @@ class OpenAiLLMClient(LLMClient):
 
                     # Yield usage if present
                     if "usage" in chunk_data:
-                        usage = parse_usage(chunk_data)
+                        usage = self._parse_usage(chunk_data)
                         if usage:
                             yield StreamUsage(usage=usage)
 
@@ -138,11 +138,39 @@ class OpenAiLLMClient(LLMClient):
         """Close the HTTP client."""
         await self._client.aclose()
 
+    def _messages_to_json(self, messages: list[ChatMessage]) -> list[dict[str, Any]]:
+        """Convert ChatMessage list to provider JSON format."""
+        result = []
+        for msg in messages:
+            json_msg: dict[str, Any] = {
+                "role": msg.role,
+                "content": msg.content,
+            }
+            if msg.name is not None:
+                json_msg["name"] = msg.name
+            result.append(json_msg)
+        return result
+
+    def _parse_usage(self, data: dict[str, Any]) -> Usage | None:
+        """Parse usage dictionary defensively."""
+        if not isinstance(data, dict):
+            return None
+
+        usage_data = data.get("usage", data)
+        if not isinstance(usage_data, dict):
+            return None
+
+        return Usage(
+            prompt_tokens=usage_data.get("prompt_tokens"),
+            completion_tokens=usage_data.get("completion_tokens"),
+            total_tokens=usage_data.get("total_tokens"),
+        )
+
     def _build_payload(self, request: ChatRequest) -> dict[str, Any]:
         """Build JSON payload from ChatRequest."""
         payload: dict[str, Any] = {
             "model": request.model,
-            "messages": messages_to_json(request.messages),
+            "messages": self._messages_to_json(request.messages),
             "stream": request.stream,
         }
 
@@ -173,7 +201,7 @@ class OpenAiLLMClient(LLMClient):
 
             finish_reason = choice.get("finish_reason")
 
-        usage = parse_usage(data)
+        usage = self._parse_usage(data)
 
         return ChatResponse(
             text=text,

@@ -75,36 +75,6 @@ class StreamDone:
 ChatStreamEvent = TokenDelta | StreamUsage | StreamDone
 
 
-def messages_to_json(messages: list[ChatMessage]) -> list[dict[str, Any]]:
-    """Convert ChatMessage list to provider JSON format."""
-    result = []
-    for msg in messages:
-        json_msg: dict[str, Any] = {
-            "role": msg.role,
-            "content": msg.content,
-        }
-        if msg.name is not None:
-            json_msg["name"] = msg.name
-        result.append(json_msg)
-    return result
-
-
-def parse_usage(data: dict[str, Any]) -> Usage | None:
-    """Parse usage dictionary defensively."""
-    if not isinstance(data, dict):
-        return None
-
-    usage_data = data.get("usage", data)
-    if not isinstance(usage_data, dict):
-        return None
-
-    return Usage(
-        prompt_tokens=usage_data.get("prompt_tokens"),
-        completion_tokens=usage_data.get("completion_tokens"),
-        total_tokens=usage_data.get("total_tokens"),
-    )
-
-
 class LLMClient(Protocol):
     """Protocol for LLM client implementations."""
 
@@ -164,13 +134,7 @@ class LLMService:
         Returns:
             AsyncIterator of ChatStreamEvent objects.
         """
-        params = self._merge_params(overrides)
-        request = ChatRequest(
-            model=self._profile.model,
-            messages=messages,
-            stream=True,
-            **params,
-        )
+        request = ChatRequest(model=self._profile.model, messages=messages, stream=True)
         return self._client.stream_chat(request)
 
     async def chat(self, messages: list[ChatMessage], **overrides: Any) -> ChatResponse:
@@ -184,36 +148,7 @@ class LLMService:
         Returns:
             Chat response.
         """
-        params = self._merge_params(overrides)
         request = ChatRequest(
-            model=self._profile.model,
-            messages=messages,
-            stream=False,
-            **params,
+            model=self._profile.model, messages=messages, stream=False
         )
         return await self._client.chat(request)
-
-    def _merge_params(self, overrides: dict[str, Any]) -> dict[str, Any]:
-        """
-        Merge parameters in order: profile defaults → profile.extra → overrides.
-
-        Args:
-            overrides: Call-level parameter overrides.
-
-        Returns:
-            Merged parameter dictionary.
-        """
-        params: dict[str, Any] = {}
-
-        # Start with profile defaults
-        if self._profile.temperature is not None:
-            params["temperature"] = self._profile.temperature
-        if self._profile.top_p is not None:
-            params["top_p"] = self._profile.top_p
-        if self._profile.max_tokens is not None:
-            params["max_tokens"] = self._profile.max_tokens
-
-        # Apply overrides (last wins)
-        params.update(overrides)
-
-        return params
