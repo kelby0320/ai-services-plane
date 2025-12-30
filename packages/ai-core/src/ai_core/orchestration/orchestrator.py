@@ -1,6 +1,6 @@
 from collections.abc import AsyncIterator
 
-from langgraph.graph.state import CompiledStateGraph
+from ai_core.orchestration.graphs.graph import OrchestratorGraph
 
 
 class ChatOrchestrator:
@@ -8,12 +8,12 @@ class ChatOrchestrator:
     The main orchestration component for executing chat graphs.
     """
 
-    def __init__(self, graph: CompiledStateGraph):
+    def __init__(self, graph: OrchestratorGraph):
         """
         Initialize the ChatOrchestrator.
 
         Args:
-            graph (CompiledStateGraph): The compiled LangGraph instance to execute.
+            graph (OrchestratorGraph): The graph instance to execute.
         """
         self._graph = graph
 

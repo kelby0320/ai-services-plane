@@ -2,15 +2,15 @@ from langgraph.config import get_stream_writer
 
 from ai_core.orchestration.services import Services
 from ai_core.orchestration.services.llm_service import ChatMessage, TokenDelta
-from ai_core.orchestration.state import GraphState
+from ai_core.orchestration.state import OrchestratorState
 
 
-async def llm_generate(state: GraphState, services: Services) -> dict:
+async def llm_generate(state: OrchestratorState, services: Services) -> dict:
     """
     Generates a response using the LLM service.
 
     Args:
-        state (GraphState): The current state of the graph.
+        state (OrchestratorState): The current state of the graph.
         services (Services): Services container with LLM service.
 
     Returns:

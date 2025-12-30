@@ -1,12 +1,12 @@
 from langgraph.graph import END, StateGraph
-from langgraph.graph.state import CompiledStateGraph
 
+from ai_core.orchestration.graphs.graph import OrchestratorGraph
 from ai_core.orchestration.nodes.generate import llm_generate
 from ai_core.orchestration.services import Services
-from ai_core.orchestration.state import GraphState
+from ai_core.orchestration.state import OrchestratorState
 
 
-def build_graph(services: Services) -> CompiledStateGraph:
+def build_graph(services: Services) -> OrchestratorGraph:
     """
     Builds the default v1 graph.
 
@@ -14,12 +14,12 @@ def build_graph(services: Services) -> CompiledStateGraph:
         services: Services container with LLM and other services.
 
     Returns:
-        CompiledStateGraph: The compiled state graph.
+        OrchestratorGraph: The compiled state graph wrapped in an OrchestratorGraph instance.
     """
-    workflow = StateGraph(GraphState)
+    workflow = StateGraph(OrchestratorState)
 
     # Add nodes - use a closure to capture services
-    async def node_func(state: GraphState) -> dict:
+    async def node_func(state: OrchestratorState) -> dict:
         return await llm_generate(state, services)
 
     workflow.add_node("llm_generate", node_func)
@@ -30,4 +30,4 @@ def build_graph(services: Services) -> CompiledStateGraph:
     # Add edges
     workflow.add_edge("llm_generate", END)
 
-    return workflow.compile()
+    return OrchestratorGraph(workflow.compile())

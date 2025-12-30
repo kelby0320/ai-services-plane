@@ -1,17 +1,17 @@
 from langgraph.config import get_stream_writer
 from langgraph.graph import END, StateGraph, START
-from langgraph.graph.state import CompiledStateGraph
 
+from ai_core.orchestration.graphs.graph import OrchestratorGraph
 from ai_core.orchestration.services import Services
-from ai_core.orchestration.state import GraphState
+from ai_core.orchestration.state import OrchestratorState
 
 
-async def dummy_llm_generate(state: GraphState) -> dict:
+async def dummy_llm_generate(state: OrchestratorState) -> dict:
     """
     Dummy LLM generate node that returns a fixed response for testing.
 
     Args:
-        state (GraphState): The current state of the graph.
+        state (OrchestratorState): The current state of the graph.
 
     Returns:
         dict: The updated state with the dummy response message.
@@ -33,14 +33,14 @@ async def dummy_llm_generate(state: GraphState) -> dict:
     return {"messages": [accumulated_text.rstrip()]}
 
 
-def build_graph(services: Services) -> CompiledStateGraph:
+def build_graph(services: Services) -> OrchestratorGraph:
     """
     Builds the dummy v1 graph for testing.
 
     Returns:
-        CompiledStateGraph: The compiled state graph with dummy nodes.
+        OrchestratorGraph: The compiled state graph with dummy nodes wrapped in an OrchestratorGraph instance.
     """
-    workflow = StateGraph(GraphState)
+    workflow = StateGraph(OrchestratorState)
 
     # Add dummy node
     workflow.add_node("dummy_llm_generate", dummy_llm_generate)
@@ -53,4 +53,4 @@ def build_graph(services: Services) -> CompiledStateGraph:
     # Add edges
     workflow.add_edge("dummy_llm_generate", END)
 
-    return workflow.compile()
+    return OrchestratorGraph(workflow.compile())

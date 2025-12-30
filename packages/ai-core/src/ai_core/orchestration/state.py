@@ -5,7 +5,7 @@ from uuid import UUID
 from ai_core.models import ModelProfile
 
 
-class GraphState(TypedDict):
+class OrchestratorState(TypedDict):
     """
     Represents the state of the graph.
 
