@@ -3,7 +3,6 @@
 import grpc
 import warnings
 
-# from aisp.v1 import chat_orchestrator_pb2 as aisp_dot_v1_dot_chat__orchestrator__pb2
 from ai_orchestrator.grpc.generated.aisp.v1 import chat_orchestrator_pb2 as aisp_dot_v1_dot_chat__orchestrator__pb2
 
 GRPC_GENERATED_VERSION = '1.76.0'

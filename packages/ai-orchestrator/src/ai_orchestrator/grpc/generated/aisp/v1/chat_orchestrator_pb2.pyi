@@ -86,27 +86,49 @@ class AssistantConfig(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     ASSISTANT_ID_FIELD_NUMBER: builtins.int
-    MODEL_PROFILE_ID_FIELD_NUMBER: builtins.int
     GRAPH_PROFILE_ID_FIELD_NUMBER: builtins.int
+    MODEL_BINDINGS_FIELD_NUMBER: builtins.int
     SYSTEM_PROMPT_FIELD_NUMBER: builtins.int
     assistant_id: builtins.str
-    model_profile_id: builtins.str
-    """Logical model profile identifier that AISP knows how to resolve."""
     graph_profile_id: builtins.str
     """Logical model profile identifier that AISP knows how to resolve."""
     system_prompt: builtins.str
     """System / persona prompt for this assistant."""
+    @property
+    def model_bindings(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[Global___ModelBinding]:
+        """Model bindings for different slots."""
+
     def __init__(
         self,
         *,
         assistant_id: builtins.str = ...,
-        model_profile_id: builtins.str = ...,
         graph_profile_id: builtins.str = ...,
+        model_bindings: collections.abc.Iterable[Global___ModelBinding] | None = ...,
         system_prompt: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["assistant_id", b"assistant_id", "graph_profile_id", b"graph_profile_id", "model_profile_id", b"model_profile_id", "system_prompt", b"system_prompt"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["assistant_id", b"assistant_id", "graph_profile_id", b"graph_profile_id", "model_bindings", b"model_bindings", "system_prompt", b"system_prompt"]) -> None: ...
 
 Global___AssistantConfig: typing_extensions.TypeAlias = AssistantConfig
+
+@typing.final
+class ModelBinding(google.protobuf.message.Message):
+    """Model binding configuration for a specific slot."""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SLOT_NAME_FIELD_NUMBER: builtins.int
+    MODEL_PROFILE_ID_FIELD_NUMBER: builtins.int
+    slot_name: builtins.str
+    model_profile_id: builtins.str
+    def __init__(
+        self,
+        *,
+        slot_name: builtins.str = ...,
+        model_profile_id: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["model_profile_id", b"model_profile_id", "slot_name", b"slot_name"]) -> None: ...
+
+Global___ModelBinding: typing_extensions.TypeAlias = ModelBinding
 
 @typing.final
 class HistoryContext(google.protobuf.message.Message):

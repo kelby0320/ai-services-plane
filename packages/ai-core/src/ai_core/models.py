@@ -24,3 +24,6 @@ class ModelProfile:
     created_at: datetime
     updated_at: datetime
     is_active: bool
+    temperature: float | None = None
+    top_p: float | None = None
+    max_tokens: int | None = None
