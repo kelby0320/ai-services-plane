@@ -4,7 +4,7 @@ from ai_core.orchestration.graphs.graph import OrchestratorGraph
 from ai_core.orchestration.nodes.generate import llm_generate
 from ai_core.orchestration.services import Services
 from ai_core.orchestration.state import OrchestratorState
-from ai_core.orchestration.nodes.helpers import node_func
+from ai_core.orchestration.graphs.helpers import node_func
 
 
 def build_graph(services: Services) -> OrchestratorGraph:
