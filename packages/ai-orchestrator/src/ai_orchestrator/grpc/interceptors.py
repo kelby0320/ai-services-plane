@@ -31,13 +31,13 @@ class ChatTurnAttributesInterceptor(grpc.aio.ServerInterceptor):
         if method.endswith("/ChatTurn") and handler.unary_stream:
             inner = handler.unary_stream
 
-            async def wrapped(request: Any, context: grpc.aio.ServicerContext) -> Any:
+            async def wrapped(request: Any, context: grpc.ServicerContext) -> Any:
                 start = time.perf_counter()
 
                 # Extract correlation IDs from request
-                request_id = getattr(request, "request_id", None)
-                session_id = getattr(request, "session_id", None)
-                user_id = getattr(request, "user_id", None)
+                request_id: str = getattr(request, "request_id")
+                session_id: str = getattr(request, "session_id")
+                user_id: str = getattr(request, "user_id")
 
                 # OTel's aio_server_interceptor should have created the server span already.
                 span = trace.get_current_span()
@@ -86,7 +86,7 @@ class ChatTurnAttributesInterceptor(grpc.aio.ServerInterceptor):
                         },
                     )
 
-            wrapped_handler = grpc.RpcMethodHandler()
+            wrapped_handler: grpc.RpcMethodHandler = grpc.RpcMethodHandler()
             wrapped_handler.unary_unary = handler.unary_unary
             wrapped_handler.unary_stream = wrapped
             wrapped_handler.stream_unary = handler.stream_unary
