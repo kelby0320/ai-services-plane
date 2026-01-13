@@ -52,29 +52,15 @@ class ChatOrchestratorService(chat_orchestrator_pb2_grpc.ChatOrchestratorService
             }
 
             # Stream events from orchestrator
-            is_first = True
             async for sourced_event in orchestrator.execute(initial_state):
                 event = sourced_event.event
-
                 if isinstance(event, TokenDelta):
                     yield chat_orchestrator_pb2.ChatEvent(
                         token=chat_orchestrator_pb2.TokenChunkEvent(
                             content=event.text,
-                            is_first=is_first,
-                            is_last=False,
                         )
                     )
-                    is_first = False
                 elif isinstance(event, StreamDone):
-                    # Send final token chunk to mark end of stream
-                    if not is_first:
-                        yield chat_orchestrator_pb2.ChatEvent(
-                            token=chat_orchestrator_pb2.TokenChunkEvent(
-                                content="",
-                                is_first=False,
-                                is_last=True,
-                            )
-                        )
                     # Send DoneEvent
                     yield chat_orchestrator_pb2.ChatEvent(
                         done=chat_orchestrator_pb2.DoneEvent()
