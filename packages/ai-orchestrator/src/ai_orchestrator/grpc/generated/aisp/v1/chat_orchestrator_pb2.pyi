@@ -246,22 +246,14 @@ class TokenChunkEvent(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     CONTENT_FIELD_NUMBER: builtins.int
-    IS_FIRST_FIELD_NUMBER: builtins.int
-    IS_LAST_FIELD_NUMBER: builtins.int
     content: builtins.str
     """raw text chunk"""
-    is_first: builtins.bool
-    """optional, can help with UI"""
-    is_last: builtins.bool
-    """optional, usually implied by DoneEvent"""
     def __init__(
         self,
         *,
         content: builtins.str = ...,
-        is_first: builtins.bool = ...,
-        is_last: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["content", b"content", "is_first", b"is_first", "is_last", b"is_last"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["content", b"content"]) -> None: ...
 
 Global___TokenChunkEvent: typing_extensions.TypeAlias = TokenChunkEvent
 
