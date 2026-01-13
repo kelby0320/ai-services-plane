@@ -1,9 +1,6 @@
-from uuid import UUID
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from ai_core.models import GraphProfile, ModelProfile
 from ai_core.orchestration.services.llm_service import LLMClient
 from ai_core.repositories import GraphProfileRepository, ModelProfileRepository
 from ai_infra.llms.client import OpenAiLLMClient, OpenAiLLMClientConfig
@@ -39,17 +36,6 @@ class AppContext:
             SqlAlchemyModelProfileRepository(session)
         )
 
-        # Build profile maps by querying all profiles
-        graph_profiles_list = self.graph_profile_repository.get_all()
-        self._graph_profiles: dict[UUID, GraphProfile] = {
-            profile.id: profile for profile in graph_profiles_list
-        }
-
-        model_profiles_list = self.model_profile_repository.get_all()
-        self._model_profiles: dict[UUID, ModelProfile] = {
-            profile.id: profile for profile in model_profiles_list
-        }
-
         # Create LLMClient
         client_config = OpenAiLLMClientConfig(
             base_url=self._settings.ai_base_url,
@@ -64,13 +50,13 @@ class AppContext:
         """Get the Settings instance."""
         return self._settings
 
-    def get_model_profile(self, id: UUID) -> ModelProfile | None:
-        """Get a ModelProfile by ID."""
-        return self._model_profiles.get(id)
+    def get_model_profile_repository(self) -> ModelProfileRepository:
+        """Get the ModelProfileRepository."""
+        return self.model_profile_repository
 
-    def get_graph_profile(self, id: UUID) -> GraphProfile | None:
-        """Get a GraphProfile by ID."""
-        return self._graph_profiles.get(id)
+    def get_graph_profile_repository(self) -> GraphProfileRepository:
+        """Get the GraphProfileRepository."""
+        return self.graph_profile_repository
 
     def get_llm_client(self) -> LLMClient:
         """Get the LLMClient instance."""

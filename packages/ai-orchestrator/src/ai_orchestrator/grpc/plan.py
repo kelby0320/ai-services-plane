@@ -81,7 +81,9 @@ class ChatTurnPlan:
                 message=f"Invalid graph_profile_id format: {request.assistant.graph_profile_id}",
             ) from e
 
-        graph_profile = app_context.get_graph_profile(graph_profile_id)
+        graph_profile = app_context.get_graph_profile_repository().get_by_id(
+            graph_profile_id
+        )
         if graph_profile is None:
             raise ChatTurnPlanError(
                 code="GRAPH_PROFILE_NOT_FOUND",
@@ -108,7 +110,9 @@ class ChatTurnPlan:
                     message=f"Invalid model_profile_id format: {binding.model_profile_id}",
                 ) from e
 
-            model_profile = app_context.get_model_profile(model_profile_id)
+            model_profile = app_context.get_model_profile_repository().get_by_id(
+                model_profile_id
+            )
             if model_profile is None:
                 raise ChatTurnPlanError(
                     code="MODEL_PROFILE_NOT_FOUND",
