@@ -21,6 +21,9 @@ async def start():
 
     configure_logging(settings)
 
+    # Inject dependencies
+    fastapi_app.state.context = app_context
+
     config = uvicorn.Config(
         fastapi_app, host="0.0.0.0", port=settings.http_port, log_level="info"
     )
