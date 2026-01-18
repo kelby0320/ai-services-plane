@@ -29,7 +29,7 @@ services:
       AI_ORCHESTRATOR__GRPC_PORT: 50051
       AI_ORCHESTRATOR__AI_API_KEY: ""
       AI_ORCHESTRATOR__AI_BASE_URL: "https://api.together.xyz/v1"
-      AI_ORCHESTRATOR__PG_DSN: "postgresql+psycopg://postgres:postgres@host.docker.internal:5433/ai_db"
+      AI_ORCHESTRATOR__PG_DSN: "postgresql+psycopg://postgres:postgres@host.docker.internal:15001/ai_db"
     ports:
       - "9000:9000"
       - "50051:50051"
