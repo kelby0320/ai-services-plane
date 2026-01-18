@@ -69,7 +69,7 @@ def upgrade() -> None:
                 "id": "86d4ea3b-b9de-4e32-adb2-41f2f4bff0bd",
                 "name": "GPT OSS 120b",
                 "description": "",
-                "model": "gpt-oss-120b",
+                "model": "openai/gpt-oss-120b",
                 "created_at": now,
                 "updated_at": now,
                 "is_active": True,
