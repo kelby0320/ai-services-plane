@@ -3,7 +3,6 @@ name: ai-services-plane
 services:
   ai-postgres:
     image: postgres:18.1-trixie
-    container_name: ai-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -20,22 +19,35 @@ services:
     volumes:
       - ai-postgres-data:/var/lib/postgresql
 
+  ai-orchestrator-migrate:
+    image: ai-orchestrator-dev:latest
+    restart: "no"
+    environment:
+      AI_ORCHESTRATOR__PG_DSN: "postgresql+psycopg://postgres:postgres@ai-postgres:5432/ai_db"
+    command: >
+      sh -c "cd /usr/src/ai_services_plane/packages/ai-infra && 
+      uv run alembic upgrade head"
+    depends_on:
+      ai-postgres:
+        condition: service_healthy
+
   ai-orchestrator:
-    image: ai-orchestrator:latest
-    container_name: ai-orchestrator
+    image: ai-orchestrator-dev:latest
     restart: unless-stopped
     environment:
       AI_ORCHESTRATOR__HTTP_PORT: 9000
       AI_ORCHESTRATOR__GRPC_PORT: 50051
       AI_ORCHESTRATOR__AI_API_KEY: ""
       AI_ORCHESTRATOR__AI_BASE_URL: "https://api.together.xyz/v1"
-      AI_ORCHESTRATOR__PG_DSN: "postgresql+psycopg://postgres:postgres@host.docker.internal:15001/ai_db"
+      AI_ORCHESTRATOR__PG_DSN: "postgresql+psycopg://postgres:postgres@ai-postgres:5432/ai_db"
     ports:
       - "9000:9000"
       - "50051:50051"
     depends_on:
       ai-postgres:
         condition: service_healthy
+      ai-orchestrator-migrate:
+        condition: service_completed_successfully
 
 volumes:
   ai-postgres-data:
